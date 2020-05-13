@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
-public class NewWindow extends Activity {
+public class NewWindow extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
