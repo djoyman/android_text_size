@@ -1,5 +1,6 @@
 package test.app.myapplication;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.SeekBar;
@@ -16,19 +17,21 @@ public class SettingsWindow extends BaseActivity {
         setContentView(R.layout.activity_settings_window);
 
         final TextView exampleText = findViewById(R.id.text_font_scale_example);
-        final float currentExampleTextSize = exampleText.getTextSize() / getResources().getDisplayMetrics().scaledDensity;
+        final float currentExampleTextSize = 12;
+        final Context context = this;
         SeekBar seekBar = findViewById(R.id.seek_bar_font_scale);
-        final MainApplication application = (MainApplication) getApplication();
+        final SettingsState settingsState = SettingsState.getInstance();
         int max = (int)((MaxScale - MinScale) / ScaleStep) + 1;
-        int progress = (int)((application.getCurrentFontScale() - MinScale) / ScaleStep);
+        int progress = (int)((settingsState.getCurrentFontScale(context) - MinScale) / ScaleStep);
         seekBar.setMax(max);
         seekBar.setProgress(progress);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float newScale = progress * ScaleStep + MinScale;
-                application.setCurrentFontScale(newScale);
-                exampleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentExampleTextSize);
+                settingsState.setCurrentFontScale(context, newScale);
+                Context newContext = FontUtils.updateFontScaleInContext(context, newScale);
+                exampleText.setTextSize(TypedValue.COMPLEX_UNIT_PX, FontUtils.convertSpToPx(currentExampleTextSize, newContext));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
